@@ -4,14 +4,15 @@ var output = document.querySelector('output');
 var textarea = document.querySelector('textarea');
 var missionsC = new List(document.getElementById('missionsC'),
                          [ {key: "name", title: "任務名稱", name: true},
-                           {key: "completeTimeObj", title: "剩餘", countDown: true},
+                           {key: "timeLeft", title: "剩餘"},
                            {key: "completeTime", title: "完成"}
-                         ], countDownCallback);
+                         ]);
 
 var tabC = new Tab(document.getElementById('tabC'), tabClickCallback, tabAllClickCallback);
 
 var GMLDB;
-var showList;
+var allList;
+var countdownTick;
 
 function getTimeLeft(strTimeLeft)
 {
@@ -30,23 +31,44 @@ function tabClickCallback(account)
 
 function tabAllClickCallback()
 {
-  missionsC.updateAllList(GMLDB, "missions", showList);
+ missionsC.updateList(allList); 
 }
 
-function countDownCallback(idx, catagory)
-{
+function countdown()
+{ 
+  var nowTime = new Date();
+  for (var i in GMLDB)
+  {
+    var acc = GMLDB[i];
+    for (var j in acc.missions)
+    {
+      var mission = acc.missions[j];
+      if (! mission.completed)
+      {
+        var diff = Math.floor((mission.completeTimeObj - nowTime)/ 60000);
+        if (diff >= 0)// (diff > 0) notify when 1 min left (not show 00:00)
+        {
+          var h = Math.floor(diff/60);
+          var m = diff%60;
+          mission.timeLeft = (h + ":" + ((m < 10) ? "0" + m : m))
+            + ":" + Math.floor((mission.completeTimeObj - nowTime) / 1000)%60; //sec for debuging
+        }
+        else
+        {
+          mission.completeTime = "--:--";
+          mission.completed = true;
+          mission.timeLeft = "";
+        }
+      }
+    }
+  }
   if (tabC.isAllTabSelected())
   {
-    GMLDB[catagory].missions[idx].completeTime = "--:--";
-    GMLDB[catagory].missions[idx].completed = true;
-    missionsC.updateAllList(GMLDB, "missions", showList);
+     missionsC.updateList(allList);
   }
   else
   {
-    var accountSelected = tabC.getSelectedID();
-    GMLDB[accountSelected].missions[idx].completeTime = "--:--";
-    GMLDB[accountSelected].missions[idx].completed = true;
-    missionsC.updateList(GMLDB[accountSelected].missions);
+    missionsC.updateList(GMLDB[tabC.getSelectedID()].missions);
   }
 }
 
@@ -87,19 +109,31 @@ function handleLua(e)
       {
         mission.completeTime = "--:--";
         mission.completed = true;
+        mission.timeLeft = "";
+        mission.completeTimeObj = nowTime; // for sorting
       }
     }
+    acc.missions.sort(function(a, b){ return a.completeTimeObj - b.completeTimeObj; });
   }
-  // build tab contents & showList
+  // build tab contents & allList
   var tabs = {};
-  showList = [];
+  allList = [];
+  var idx = 0;
   Object.keys(GMLDB).forEach(function (account) 
   {
     tabs[account] = { name: account.split("-")[0], title: account };
-    showList.push(account);
+    for (var j in GMLDB[account].missions)
+    {
+      allList[idx++] = GMLDB[account].missions[j];
+    }
   });
   tabC.create(tabs);
+  allList.sort(function(a, b){ return a.completeTimeObj - b.completeTimeObj; });
+
   startLoop();
+  clearInterval(countdownTick);
+  countdown();
+  countdownTick = setInterval(countdown, 1000);
 }
 
 function loadFileEntry(_chosenEntry) {
