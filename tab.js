@@ -1,4 +1,4 @@
-Tab = function(container, tabClickCallback, tabAllClickCallback)
+Tab = function(container, tabClickCallback)
 {
   var ul = document.createElement("UL"); 
   ul.setAttribute("class", "tabs");
@@ -7,17 +7,11 @@ Tab = function(container, tabClickCallback, tabAllClickCallback)
 
   this.selectedID = "";
   this.tabClickCallback = tabClickCallback;
-  this.tabAllClickCallback = tabAllClickCallback;
 }
 
 Tab.prototype.getSelectedID = function ()
 {
   return this.selectedID;
-}
-
-Tab.prototype.isAllTabSelected = function ()
-{
-  return (this.selectedID == "all");
 }
 
 Tab.prototype.tabClicked = function (id)
@@ -40,14 +34,7 @@ Tab.prototype.tabClicked = function (id)
       node.removeAttribute("class");
     }
   }
-  if (id == "all")
-  {
-    this.tabAllClickCallback();
-  }
-  else
-  {
-    this.tabClickCallback(this.selectedID);
-  }
+  this.tabClickCallback(this.selectedID);
 }
 
 Tab.prototype.clearTabs = function ()
@@ -59,7 +46,7 @@ Tab.prototype.clearTabs = function ()
   }
 }
 
-Tab.prototype.create = function (tabList)
+Tab.prototype.createTab = function (tabList)
 {
   this.clearTabs();
 
@@ -73,11 +60,6 @@ Tab.prototype.create = function (tabList)
       tabInstance.tabClicked(e.currentTarget.id);
     });
     tabInstance.ul.appendChild(li);
-  }
-
-  if (this.tabAllClickCallback)
-  {
-    generateTab(this, "all", "ALL");
   }
 
   for (var i in tabList)
@@ -94,7 +76,15 @@ Tab.prototype.create = function (tabList)
   {
     this.tabClicked();
   }
-  
+}
+
+Tab.prototype.show = function ()
+{
+  this.ul.parentNode.removeAttribute("hidden");
 }
 
 
+Tab.prototype.hide = function ()
+{
+  this.ul.parentNode.setAttribute("hidden", true);
+}

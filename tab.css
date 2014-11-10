@@ -5,6 +5,10 @@
   border-bottom: 2px solid #333;
 }
 
+.tabs-container [hidden] {
+  display: none;
+}
+
 .tabs{
   margin: 0;
   padding: 0;

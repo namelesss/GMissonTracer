@@ -1,17 +1,19 @@
 var chooseFileButton = document.querySelector('#choose_file');
 var refreshButton = document.querySelector('#refresh');
-var output = document.querySelector('output');
-var textarea = document.querySelector('textarea');
 var missionsC = new List(document.getElementById('missionsC'),
                          [ {key: "name", title: "任務名稱", name: true},
                            {key: "timeLeft", title: "剩餘"},
                            {key: "completeTime", title: "完成"}
                          ]);
 
-var tabC = new Tab(document.getElementById('tabC'), tabClickCallback, tabAllClickCallback);
-
+var tabC = new Tab(document.getElementById('tabC'), tabClickCallback);//, tabAllClickCallback);
+var menuC = new Tab(document.getElementById('menuC'), menuClickCallback);
+var menu = { all: {name: "ALL"},
+  uncompleted: {name: "Uncompleted"}, 
+  uncategorized:{name: "Uncategorized"}
+};
 var GMLDB;
-var allList;
+var allList, uncompletedList;
 var countdownTick;
 
 function getTimeLeft(strTimeLeft)
@@ -24,14 +26,30 @@ function getTimeLeft(strTimeLeft)
   return 3600*h+60*m+s;
 }
 
-function tabClickCallback(account)
+function menuClickCallback(menu)
 {
-  missionsC.updateList(GMLDB[account].missions); 
+  if (menu == "all")
+  {
+    tabC.show();
+    missionsC.createList(GMLDB[tabC.getSelectedID()].missions);
+  }
+  else if (menu == "uncompleted")
+  {
+    tabC.hide();
+    // remove completed mission in uncompletedList
+    while(uncompletedList[0].completed) { uncompletedList.shift(); }
+    missionsC.createList(uncompletedList);
+  }
+  else if (menu == "uncategorized")
+  {
+    tabC.hide();
+    missionsC.createList(allList);    
+  }
 }
 
-function tabAllClickCallback()
+function tabClickCallback(account)
 {
- missionsC.updateList(allList); 
+  missionsC.createList(GMLDB[account].missions); 
 }
 
 function countdown()
@@ -62,18 +80,11 @@ function countdown()
       }
     }
   }
-  if (tabC.isAllTabSelected())
-  {
-     missionsC.updateList(allList);
-  }
-  else
-  {
-    missionsC.updateList(GMLDB[tabC.getSelectedID()].missions);
-  }
+  missionsC.updateList();
 }
 
 // Convert table frome lua file to JSON format
-function handleLua(e)
+function handleFile(e)
 {
   var result = "" + e.target.result;
 
@@ -118,6 +129,7 @@ function handleLua(e)
   // build tab contents & allList
   var tabs = {};
   allList = [];
+  uncompletedList = [];
   var idx = 0;
   Object.keys(GMLDB).forEach(function (account) 
   {
@@ -127,9 +139,13 @@ function handleLua(e)
       allList[idx++] = GMLDB[account].missions[j];
     }
   });
-  tabC.create(tabs);
-  allList.sort(function(a, b){ return a.completeTimeObj - b.completeTimeObj; });
+  allList.sort(function(a, b) { return a.completeTimeObj - b.completeTimeObj; });
+  allList.forEach(function(m) { if (!m.completed) {uncompletedList.push(m);} });
 
+
+
+  tabC.createTab(tabs);
+  menuC.createTab(menu);  // this initial sequence is strange?
   startLoop();
   clearInterval(countdownTick);
   countdown();
@@ -144,7 +160,7 @@ function loadFileEntry(_chosenEntry) {
     reader.onerror = function(e){
       console.error(e);
     };
-    reader.onload = handleLua;
+    reader.onload = handleFile;
 
     reader.readAsText(file);
     // Update pathname
