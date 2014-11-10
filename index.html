@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <title>GMissionTracer</title>
+    <meta charset="UTF-8">
+    <style>
+      body {
+        display: -webkit-flex;
+        -webkit-flex-direction: column;
+        background-color: #242424;
+      }
+      #menu {
+        width: 100%;
+        display: flex;
+      }
+      button {
+        background: linear-gradient(#888 40%, #777 70%);
+        border: 1px solid #999;
+        border-radius: 3px;
+        padding: 5px 8px;
+        margin: 0px 3px;
+        outline: none;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        cursor: pointer;
+        color: #fff;
+        text-shadow: -1px -1px 1px rgba(0,0,0,0.3);
+        text-align:left;
+        font-size: 10pt;
+        font-weight: 400;
+      }
+      button:not(:disabled):hover {
+        background: linear-gradient(#999 40%, #888 70%);
+      }
+      button:not(:disabled):active {
+        background: linear-gradient(#888 40%, #777 70%);
+      }
+      input {
+        flex:1;
+        -webkit-user-select: none;
+        margin: 0px 3px;
+      }
+      input, textarea {
+        box-shadow: 1px 1px 5px #ccc inset;
+        border: none;
+        padding: 3px;
+      }
+      [readonly] {
+        background: #bbb;
+      }
+      [hidden] {
+        display: none;
+      }
+    </style>
+    <link href="list.css" rel="stylesheet" type="text/css">
+    <link href="tab.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+
+    <div id="menu">
+      <button id="refresh">重整</button>
+      <input type="text" id="file_path" readonly>
+      <button id="choose_file">檔案</button>
+    </div>
+
+
+    <div id="tabC" class="tabs-container"></div>
+
+    <div id="missionsC" class="list-container"></div>
+
+    <script src="Tab.js"></script>
+    <script src="List.js"></script>
+    <script src="GMissionTracer.js"></script>
+  </body>
+</html>

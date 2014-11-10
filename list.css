@@ -1,0 +1,66 @@
+﻿.list-container {
+  flex:1;
+  border: none;
+  width: inherit;
+}
+
+.list-container table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 75%;
+  color: #ccc;
+  background: #202020;
+}
+.list-container thead {
+  color: white;
+  background: #161616;
+}
+
+.list-container tbody {
+ /* background-color: cornflowerblue;*/
+}
+
+.list-container tr {
+  border-top: 1px solid #272727;
+}
+
+.list-container td, th {
+  height: 30px;
+  margin: 0px;  
+  padding: 0px;  
+  border-right: 1px solid #272727;
+  outline: none;
+  text-align: center;
+  text-decoration: none;
+}
+
+.list-container td:last-child, .list-container th:last-child {
+  border: 0;
+}
+
+.list-container td.name, .list-container th.name {
+  text-align: left;
+  padding-left: 10px;
+  width: 80%;
+}
+
+.list-container tr.completed td {
+  color: #888;
+  /*background-color: cadetblue;*/
+}
+
+
+.list {
+  height: 30px;
+  line-height: 30px;
+  width: inherit;
+  background-color: aquamarine;
+  border: solid 1px;
+  margin: 0px;
+  padding-left: 10px;
+  outline: none;
+  text-decoration: none;
+}
+.list.completed {
+  background-color: cadetblue;
+}
