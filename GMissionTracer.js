@@ -37,13 +37,13 @@ function menuClickCallback(menu)
   {
     tabC.hide();
     // remove completed mission in uncompletedList
-    while(uncompletedList[0].completed) { uncompletedList.shift(); }
-    missionsC.createList(uncompletedList);
+    while(uncompletedList.length > 0 && uncompletedList[0].completed) { uncompletedList.shift(); }
+    missionsC.createList(uncompletedList, "account");
   }
   else if (menu == "uncategorized")
   {
     tabC.hide();
-    missionsC.createList(allList);    
+    missionsC.createList(allList, "account");
   }
 }
 
@@ -99,13 +99,14 @@ function handleFile(e)
                  ;
   
   GMLDB = JSON.parse(result);
-  // Add Complete Time
+  // Add Complete Time & account resovle information
   for (var i in GMLDB)
   {
     var acc = GMLDB[i];
     for (var j in acc.missions)
     {
       var mission = acc.missions[j];
+      mission.account = i;
       var completeTime = new Date((acc.timestamp + getTimeLeft(mission.timeLeft)) * 1000);
       var nowTime = new Date();
       if (nowTime < completeTime)

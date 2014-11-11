@@ -23,15 +23,6 @@
   this.currentList;
 }
 
-List.prototype.clearList = function ()
-{
-  var nodes = this.tbody.childNodes;
-  for (var i = nodes.length - 1; i >= 0 ; --i)
-  {
-    this.tbody.removeChild(nodes[i]);
-  }
-}
-
 List.prototype.updateList = function ()
 {
   var nodes = this.tbody.childNodes;
@@ -48,19 +39,37 @@ List.prototype.updateList = function ()
       var title = this.header[i];
       var td = tr.childNodes[i];
       td.innerHTML = data[title.key];
-      if (title.name) { td.setAttribute("class", "name"); }
+      if (title.name) {
+        td.setAttribute("class", "name"); 
+        if (this.titleKey)
+        {
+          td.setAttribute("title", data[this.titleKey]); 
+        }
+      }
     }
   }
 }
 
-List.prototype.createList = function (dataList)
+List.prototype.clearList = function ()
+{
+}
+
+List.prototype.createList = function (dataList, titleKey)
 {
   this.currentList = dataList
-  this.clearList();
-  // create list
-  for (var j = 0; j < dataList.length; ++j)
+  this.titleKey = (titleKey) ? titleKey : "";
+
+  var nodes = this.tbody.childNodes;
+  var numCurrentList = nodes.length;
+  var numNeededList = dataList.length;
+  // clear extra tr
+  for (var i = numCurrentList - 1; i >= numNeededList ; --i)
   {
-    var data = dataList[j];
+    this.tbody.removeChild(nodes[i]);
+  }
+  // create insufficient tr
+  for (var j = numCurrentList; j < numNeededList; ++j)
+  {
     var tr = document.createElement("TR");
     
     for (var i = 0; i < this.header.length; ++i)
