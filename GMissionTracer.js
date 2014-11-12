@@ -17,7 +17,7 @@ var allList, uncompletedList;
 var countdownTick;
 
 var notOptions = {
-  iconUrl:"white.jpg", 
+  iconUrl:"inv_scroll_05.jpg", 
   type : "basic"
 };
 

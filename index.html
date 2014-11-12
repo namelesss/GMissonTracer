@@ -7,6 +7,16 @@
         display: -webkit-flex;
         -webkit-flex-direction: column;
         background-color: #242424;
+        width: 100%;
+        height: 100%;
+        padding:0; 
+        margin:0;
+      }
+      #body-for-padding {
+        display: -webkit-flex;
+        -webkit-flex-direction: column;
+        height: 100%;
+        padding: 5;
       }
       #menu {
         width: 100%;
@@ -52,18 +62,17 @@
     <link href="tab.css" rel="stylesheet" type="text/css">
   </head>
   <body>
+    <div id="body-for-padding">
+      <div id="menu">
+        <button id="refresh">重整</button>
+        <input type="text" id="file_path" readonly>
+        <button id="choose_file">檔案</button>
+      </div>
 
-    <div id="menu">
-      <button id="refresh">重整</button>
-      <input type="text" id="file_path" readonly>
-      <button id="choose_file">檔案</button>
+      <div id="menuC" class="tabs-container"></div>
+      <div id="tabC" class="tabs-container" hidden></div>
+      <div id="missionsC" class="list-container" style="flex:1"></div>
     </div>
-
-
-    <div id="menuC" class="tabs-container"></div>
-    <div id="tabC" class="tabs-container" hidden></div>
-
-    <div id="missionsC" class="list-container"></div>
 
     <script src="Tab.js"></script>
     <script src="List.js"></script>
