@@ -84,6 +84,11 @@ function countdown()
           mission.completeTime = "--:--";
           mission.completed = true;
           mission.timeLeft = "";
+          // refresh Uncompleted Tab
+          if (menuC.getSelectedID() == "uncompleted")
+          {
+            menuClickCallback("uncompleted");
+          }
           // Send notification
           notOptions.title = "[" + mission.name + "] 已完成!!";
           notOptions.message = "<" + i + ">";

@@ -34,6 +34,11 @@ List.prototype.updateList = function ()
     {
       tr.setAttribute("class", "completed");
     }
+    else
+    {
+      tr.removeAttribute("class");
+    }
+
     for (var i = 0; i < this.header.length; ++i)
     {
       var title = this.header[i];
