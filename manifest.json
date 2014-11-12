@@ -10,6 +10,7 @@
   },
   "permissions": [
     {"fileSystem": ["retainEntries"]},
-    "storage"
+    "storage",
+    "notifications"
   ]
 }

@@ -5,16 +5,21 @@ var missionsC = new List(document.getElementById('missionsC'),
                            {key: "timeLeft", title: "剩餘"},
                            {key: "completeTime", title: "完成"}
                          ]);
-
-var tabC = new Tab(document.getElementById('tabC'), tabClickCallback);//, tabAllClickCallback);
+var tabC = new Tab(document.getElementById('tabC'), tabClickCallback);
 var menuC = new Tab(document.getElementById('menuC'), menuClickCallback);
 var menu = { all: {name: "ALL"},
   uncompleted: {name: "Uncompleted"}, 
   uncategorized:{name: "Uncategorized"}
 };
+
 var GMLDB;
 var allList, uncompletedList;
 var countdownTick;
+
+var notOptions = {
+  iconUrl:"white.jpg", 
+  type : "basic"
+};
 
 function getTimeLeft(strTimeLeft)
 {
@@ -52,8 +57,10 @@ function tabClickCallback(account)
   missionsC.createList(GMLDB[account].missions); 
 }
 
+var emptyFunc = function() {};  //for notification callback
 function countdown()
 { 
+  var allComplete = true;
   var nowTime = new Date();
   for (var i in GMLDB)
   {
@@ -63,6 +70,7 @@ function countdown()
       var mission = acc.missions[j];
       if (! mission.completed)
       {
+        allComplete = false;
         var diff = Math.floor((mission.completeTimeObj - nowTime)/ 60000);
         if (diff >= 0)// (diff > 0) notify when 1 min left (not show 00:00)
         {
@@ -76,11 +84,20 @@ function countdown()
           mission.completeTime = "--:--";
           mission.completed = true;
           mission.timeLeft = "";
+          // Send notification
+          notOptions.title = "[" + mission.name + "] 已完成!!";
+          notOptions.message = "<" + i + ">";
+          chrome.notifications.clear("GMLID", emptyFunc);
+          chrome.notifications.create("GMLID", notOptions, emptyFunc);
         }
       }
     }
   }
   missionsC.updateList();
+  if (allComplete)
+  {
+    clearInterval(countdownTick);
+  }
 }
 
 // Convert table frome lua file to JSON format
@@ -99,6 +116,9 @@ function handleFile(e)
                  ;
   
   GMLDB = JSON.parse(result);
+  // debug
+  // GMLDB["Codinii-Beta Leveling Realm 01"].timestamp = Math.floor((new Date()).getTime()/1000)- 57*60-58;
+
   // Add Complete Time & account resovle information
   for (var i in GMLDB)
   {
@@ -142,8 +162,6 @@ function handleFile(e)
   });
   allList.sort(function(a, b) { return a.completeTimeObj - b.completeTimeObj; });
   allList.forEach(function(m) { if (!m.completed) {uncompletedList.push(m);} });
-
-
 
   tabC.createTab(tabs);
   menuC.createTab(menu);  // this initial sequence is strange?
@@ -195,19 +213,6 @@ function loadFileFromStorageEntry()
   });
 }
 
-// Init
-function init(launchData)
-{
-  if (launchData && launchData.items && launchData.items[0]) 
-  {
-    loadFileEntry(launchData.items[0].entry);
-  } 
-  else 
-  {
-    loadFileFromStorageEntry();
-  }
-}
-
 refreshButton.addEventListener('click', function(e)
 {
   stopLoop();
@@ -244,13 +249,14 @@ function stopLoop()
   clearInterval(gmlTick);
 }
 
-init(launchData);
-/*
-  var txt = "";
-  var obj = accountUL.childNodes;
-  for(var i in  obj)
+window.addEventListener("load", function() 
+{
+  if (launchData && launchData.items && launchData.items[0]) 
   {
-    txt += i + " " + obj[i]+"\r\n";
+    loadFileEntry(launchData.items[0].entry);
+  } 
+  else 
+  {
+    loadFileFromStorageEntry();
   }
-  textarea.value = txt;
-  */
+});
