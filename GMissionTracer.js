@@ -27,7 +27,6 @@ function getTimeLeft(strTimeLeft)
   h = (h = strTimeLeft.match(/\d+\u5C0F/)) ? parseInt(h[0].match(/\d+/)[0]) : 0; //小
   m = (m = strTimeLeft.match(/\d+\u5206/)) ? parseInt(m[0].match(/\d+/)[0]) : 0; //分
   s = (s = strTimeLeft.match(/\d+\u79D2/)) ? parseInt(s[0].match(/\d+/)[0]) : 0; //秒
-  //return " ("+h+"h"+m+"m"+s+"s)";
   return 3600*h+60*m+s;
 }
 
@@ -76,8 +75,8 @@ function countdown()
         {
           var h = Math.floor(diff/60);
           var m = diff%60;
-          mission.timeLeft = (h + ":" + ((m < 10) ? "0" + m : m))
-            + ":" + Math.floor((mission.completeTimeObj - nowTime) / 1000)%60; //sec for debuging
+          mission.timeLeft = (h + ":" + ((m < 10) ? "0" + m : m));
+//            + ":" + Math.floor((mission.completeTimeObj - nowTime) / 1000)%60; //sec for debuging
         }
         else
         {
